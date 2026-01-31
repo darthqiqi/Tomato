@@ -39,3 +39,7 @@ def health_check():
         "status": "healthy",      # 服务状态
         "service": "Tomato Backend"  # 服务名称
     }
+
+
+def test():
+    print('hello world')
