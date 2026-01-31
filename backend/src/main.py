@@ -1,7 +1,13 @@
 # 导入FastAPI框架的核心类
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 # 导入CORS中间件，用于处理跨域请求
 from fastapi.middleware.cors import CORSMiddleware
+from database import engine, get_db, Base
+from sqlalchemy.orm import Session
+
+# 创建所有表（实际生产环境会用 Alembic 做迁移，但开发阶段这样最简单）
+Base.metadata.create_all(bind=engine)
+
 
 # 创建FastAPI应用的实例
 # title参数设置API文档的标题
@@ -39,3 +45,9 @@ def health_check():
         "status": "healthy",      # 服务状态
         "service": "Tomato Backend"  # 服务名称
     }
+
+# 新增：一个测试数据库连接的端点
+@app.get("/api/test-db")
+def test_db_connection(db: Session = Depends(get_db)):
+    # 这里可以添加一个简单的数据库查询测试
+    return {"message": "Database connection successful", "db_type": str(engine.url)}
